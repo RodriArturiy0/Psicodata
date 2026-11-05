@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentación PsicoData - Colegio Paidos Campeche</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 18mm 15mm 18mm 15mm;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #1e293b;
+            background-color: #ffffff;
+            line-height: 1.6;
+            margin: 0;
+            padding: 30px;
+        }
+        .header {
+            border-bottom: 3px solid #4338ca;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        h1 {
+            color: #1e1b4b;
+            font-size: 24px;
+            margin: 0 0 6px 0;
+        }
+        .subtitle {
+            color: #4338ca;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .meta {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        h2 {
+            color: #312e81;
+            font-size: 17px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            page-break-after: avoid;
+        }
+        h3 {
+            color: #1e293b;
+            font-size: 14px;
+            margin-top: 18px;
+            margin-bottom: 6px;
+            page-break-after: avoid;
+        }
+        p, li {
+            font-size: 12.5px;
+            color: #334155;
+        }
+        ul, ol {
+            padding-left: 20px;
+            margin-top: 4px;
+            margin-bottom: 10px;
+        }
+        li {
+            margin-bottom: 3px;
+        }
+        pre {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 11px;
+            overflow-x: auto;
+            color: #0f172a;
+            page-break-inside: avoid;
+        }
+        code {
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            background-color: #f1f5f9;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #4338ca;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 11px;
+            page-break-inside: avoid;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 6px 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Documentación Técnica y Funcional del Sistema PsicoData</h1>
+        <p class="subtitle">Colegio Paidos Campeche — Departamento de Psicopedagogía</p>
+        <p class="meta">Versión Oficial Actualizada | Framework: Laravel | Base de Datos: MariaDB Local</p>
+    </div>
+    <h1>Documentación Técnica y Funcional del Sistema PsicoData</h1>
+<p><strong>Colegio Paidos Campeche — Módulo de Psicopedagogía</strong></p>
+<hr />
+<h2>1. Resumen Ejecutivo</h2>
+<p><strong>PsicoData</strong> es una plataforma web desarrollada en <strong>Laravel</strong> diseñada para digitalizar, estructurar y optimizar el seguimiento psicopedagógico de los alumnos del Colegio Paidos Campeche. </p>
+<p>El sistema resuelve tres problemáticas críticas de las instituciones educativas:
+1. <strong>Historial clínico-pedagógico continuo:</strong> Mantiene el registro del estudiante a lo largo de los años lectivos, separando su identidad general de las particularidades pedagógicas de cada ciclo escolar (grado, grupo, docente titular y adecuaciones).
+2. <strong>Registro oportuno de intervenciones:</strong> Centraliza la bitácora de intervenciones en aula, entrevistas con tutores, sesiones individuales y acuerdos con docentes.
+3. <strong>Automatización de métricas para Dirección:</strong> Genera de manera instantánea el conteo mensual de intervenciones por categoría y el panel de casos de alta prioridad para rendición de cuentas institucional.</p>
+<hr />
+<h2>2. Arquitectura Tecnológica</h2>
+<ul>
+<li><strong>Framework Backend:</strong> Laravel 11 / 12 (PHP)</li>
+<li><strong>Base de Datos:</strong> MariaDB / MySQL (diseño relacional normalizado con integridad referencial)</li>
+<li><strong>Motor de Plantillas Frontend:</strong> Blade + Tailwind CSS (diseño responsive, limpio y enfocado en usabilidad clínica)</li>
+<li><strong>ORM:</strong> Eloquent (con eager loading para optimización de consultas SQL)</li>
+<li><strong>Manejo de Fechas:</strong> Carbon (con casting nativo de datetime en modelos)</li>
+</ul>
+<h3>Estructura Principal del Proyecto</h3>
+<pre><code class="language-text">psicodata/
+├── app/
+│   ├── Console/Commands/
+│   │   ├── DatabaseBackupCommand.php # Rutina mysqldump y retención de 30 copias
+│   │   └── CheckEnvironmentCommand.php # Detección de OneDrive y estabilidad local
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AlumnoController.php      # CRUD de alumnos, bajas lógicas e impresión
+│   │   │   ├── AtencionController.php    # Intervenciones, modo aula móvil
+│   │   │   ├── AuthController.php        # Autenticación y conmutador rápido de roles
+│   │   │   ├── BackupController.php      # Gestión y descarga de respaldos SQL
+│   │   │   ├── CicloController.php       # Gestión de ciclos escolares y &quot;Brincado&quot;
+│   │   │   └── DashboardController.php   # Agregaciones, métricas e informe PDF
+│   │   ├── Middleware/
+│   │   │   ├── EnsureCanAccessExpedientes.php # Bloqueo 403 a plantilla docente
+│   │   │   └── EnsureRole.php                 # Control granular por rol
+│   │   └── Requests/                     # Capa desacoplada de validación estricta
+│   │       ├── StoreAlumnoRequest.php
+│   │       ├── UpdateAlumnoRequest.php
+│   │       ├── StoreAtencionRequest.php
+│   │       ├── StoreMovilAulaRequest.php
+│   │       └── TransicionCicloRequest.php
+│   └── Models/
+│       ├── Alumno.php                # Entidad permanente del estudiante
+│       ├── CicloEscolar.php          # Periodo lectivo (ej. 2026-2027)
+│       ├── ExpedienteCiclo.php       # Ficha psicopedagógica anual del alumno
+│       ├── AtencionEvento.php        # Bitácora de intervenciones y acuerdos
+│       └── User.php                  # Usuario especialista / psicopedagogo
+├── database/
+│   ├── migrations/                   # Esquemas MariaDB, llaves foráneas e índices
+│   └── seeders/DatabaseSeeder.php    # Datos iniciales para pruebas
+├── resources/views/
+│   ├── layouts/app.blade.php         # Layout base responsive con Tailwind CSS
+│   ├── auth/
+│   │   └── login.blade.php           # Acceso institucional y selector demo
+│   ├── dashboard.blade.php           # Panel de métricas mensuales y prioridades
+│   ├── dashboard/imprimir.blade.php  # Informe ejecutivo para Dirección en PDF
+│   ├── alumnos/
+│   │   ├── index.blade.php           # Listado de expedientes con filtros y pestañas
+│   │   ├── create.blade.php          # Formulario de alta de nuevo expediente
+│   │   ├── edit.blade.php            # Edición clínica y personal completa
+│   │   ├── show.blade.php            # Ficha del alumno con línea de tiempo
+│   │   └── imprimir.blade.php        # Expediente imprimible con firmas en PDF
+│   ├── atenciones/
+│   │   ├── create.blade.php          # Formulario de intervención general
+│   │   └── movil_aula.blade.php      # Modo Aula touch para smartphone/tablet
+│   ├── ciclos/
+│   │   ├── index.blade.php           # Listado de periodos y estado de ciclos
+│   │   └── transicion.blade.php      # Asistente de pase de ciclo (&quot;Brincado&quot;)
+│   ├── respaldos/
+│   │   └── index.blade.php           # Panel web de respaldos y descarga SQL
+│   └── errors/
+│       └── 403.blade.php             # Pantalla oficial de bloqueo confidencial
+├── scripts/
+│   ├── backup_database.ps1           # Respaldo nocturno programable en Windows
+│   ├── backup_database.sh            # Respaldo nocturno para cron en Linux
+│   └── migrar_fuera_de_onedrive.ps1  # Migración fuera de OneDrive
+└── routes/web.php                    # Definición de rutas web y endpoints
+</code></pre>
+<hr />
+<h2>3. Arquitectura de Base de Datos y Modelos</h2>
+<p>El modelo de datos separa la identidad fija del alumno de su evolución en cada periodo académico:</p>
+<pre><code class="language-text">+-------------------+       1:N       +----------------------+       1:N       +---------------------+
+|      alumnos      | &lt;-------------- |   expedientes_ciclo  | &lt;-------------- |  atenciones_eventos |
++-------------------+                 +----------------------+                 +---------------------+
+| id                |                 | id                   |                 | id                  |
+| nombre_completo   |                 | alumno_id (FK)       |                 | expediente_id (FK)  |
+| curp              |                 | ciclo_id (FK)        |                 | user_id (FK)        |
+| estatus_general   |                 | grado_grupo          |                 | tipo_atencion       |
++-------------------+                 | docente_titular      |                 | fecha_hora          |
+                                      | diagnostico          |                 | participantes       |
++-------------------+                 | adecuaciones / farm. |                 | motivo              |
+|  ciclos_escolares |                 | prioridad (ALTA/SEG) |                 | observaciones       |
++-------------------+                 | estado_ciclo         |                 | acuerdos            |
+| id                |       1:N       +----------------------+                 +---------------------+
+| nombre_ciclo      | &lt;---------------+
+| fecha_inicio/fin  |
+| estado            |
++-------------------+
+</code></pre>
+<h3>Descripción de Entidades:</h3>
+<ol>
+<li><strong><code>alumnos</code> (<code>Alumno.php</code>):</strong></li>
+<li>Representa al estudiante como persona. Es permanente y único.</li>
+<li>Atributos: <code>nombre_completo</code>, <code>curp</code>, <code>estatus_general</code> (<code>ACTIVO</code>, <code>EGRESADO_SECUNDARIA</code>, <code>ARCHIVO_MUERTO</code>).</li>
+<li>
+<p>Relación: <code>hasMany(ExpedienteCiclo::class, 'alumno_id')</code>.</p>
+</li>
+<li>
+<p><strong><code>ciclos_escolares</code> (<code>CicloEscolar.php</code>):</strong></p>
+</li>
+<li>Delimita temporalmente el año lectivo (ej. "2026-2027").</li>
+<li>Atributos: <code>nombre_ciclo</code>, <code>fecha_inicio</code>, <code>fecha_fin</code>, <code>estado</code> (<code>ACTIVO</code>, <code>INACTIVO</code>, <code>CONGELADO</code>).</li>
+<li>
+<p>Relación: <code>hasMany(ExpedienteCiclo::class, 'ciclo_id')</code>.</p>
+</li>
+<li>
+<p><strong><code>expedientes_ciclo</code> (<code>ExpedienteCiclo.php</code>):</strong></p>
+</li>
+<li><strong>Pivote central de la aplicación.</strong> Conecta al alumno con el ciclo vigente y almacena el estado clínico y pedagógico de ese periodo.</li>
+<li>Atributos: <code>grado_grupo</code>, <code>docente_titular</code>, <code>diagnostico</code> (ej. TEA, TDAH), <code>tiene_valoracion_fisica</code>, <code>tratamiento_farmacologico</code>, <code>detalle_farmaco</code>, <code>requiere_adecuaciones</code>, <code>detalle_adecuaciones</code>, <code>especialista_externo</code>, <code>prioridad</code> (<code>ALTA</code>, <code>SEGUIMIENTO</code>), <code>estado_ciclo</code> (<code>ACTIVO</code>, <code>PROMOVIDO</code>, etc.).</li>
+<li>
+<p>Relaciones: <code>belongsTo(Alumno::class)</code>, <code>belongsTo(CicloEscolar::class)</code>, <code>hasMany(AtencionEvento::class)</code>.</p>
+</li>
+<li>
+<p><strong><code>atenciones_eventos</code> (<code>AtencionEvento.php</code>):</strong></p>
+</li>
+<li>Bitácora de incidentes, sesiones y acuerdos.</li>
+<li>Atributos: <code>tipo_atencion</code> (<code>AULA</code>, <code>PADRES</code>, <code>ALUMNO</code>, <code>DOCENTE</code>), <code>fecha_hora</code>, <code>participantes</code>, <code>motivo</code>, <code>observaciones</code>, <code>acuerdos</code>.</li>
+<li>Cast: <code>'fecha_hora' =&gt; 'datetime'</code> para fácil manipulación con Carbon.</li>
+</ol>
+<hr />
+<h2>4. Detalle del CRUD (Operaciones de Datos)</h2>
+<h3>A. Módulo de Alumnos y Expedientes (<code>AlumnoController</code>)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Operación</th>
+<th style="text-align: left;">Método HTTP</th>
+<th style="text-align: left;">Ruta</th>
+<th style="text-align: left;">Acción en Controlador</th>
+<th style="text-align: left;">Vista / Destino</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Listar (Read)</strong></td>
+<td style="text-align: left;"><code>GET</code></td>
+<td style="text-align: left;"><code>/alumnos</code></td>
+<td style="text-align: left;"><code>AlumnoController@index</code></td>
+<td style="text-align: left;"><code>alumnos/index.blade.php</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Nuevo Formulario (Create)</strong></td>
+<td style="text-align: left;"><code>GET</code></td>
+<td style="text-align: left;"><code>/alumnos/create</code></td>
+<td style="text-align: left;"><code>AlumnoController@create</code></td>
+<td style="text-align: left;"><code>alumnos/create.blade.php</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Guardar (Create)</strong></td>
+<td style="text-align: left;"><code>POST</code></td>
+<td style="text-align: left;"><code>/alumnos</code></td>
+<td style="text-align: left;"><code>AlumnoController@store</code></td>
+<td style="text-align: left;">Redirección a <code>/alumnos</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Detalle/Timeline (Read)</strong></td>
+<td style="text-align: left;"><code>GET</code></td>
+<td style="text-align: left;"><code>/alumnos/{id}</code></td>
+<td style="text-align: left;"><code>AlumnoController@show</code></td>
+<td style="text-align: left;"><code>alumnos/show.blade.php</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Funcionamiento del Guardado (<code>store</code>):</h4>
+<p>El método <code>store</code> ejecuta un registro atómico y seguro:
+1. Valida los campos obligatorios del formulario (<code>nombre_completo</code>, <code>grado_grupo</code>, <code>docente_titular</code>, <code>diagnostico</code>, <code>prioridad</code>).
+2. Inserta el registro permanente en la tabla <code>alumnos</code>.
+3. Obtiene el ciclo escolar activo actual (o lo inicializa automáticamente si es la primera ejecución).
+4. Inserta el registro en <code>expedientes_ciclo</code> vinculando el <code>alumno_id</code> y <code>ciclo_id</code>.
+5. Redirige a la lista de alumnos con un mensaje flash de confirmación (<code>session('success')</code>).</p>
+<h4>Enfoque de Eliminación y Baja:</h4>
+<p>Por diseño psicopedagógico institucional, los datos no se borran físicamente (<code>hard delete</code>), protegiendo el historial médico-legal. En su lugar, el sistema prevé la baja lógica mediante los campos <code>estado_ciclo</code> y <code>estatus_general</code> (<code>ARCHIVO_MUERTO</code>, <code>EGRESADO_SECUNDARIA</code>).</p>
+<hr />
+<h3>B. Módulo de Intervenciones Psicopedagógicas (<code>AtencionController</code>)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Operación</th>
+<th style="text-align: left;">Método HTTP</th>
+<th style="text-align: left;">Ruta</th>
+<th style="text-align: left;">Acción en Controlador</th>
+<th style="text-align: left;">Vista / Destino</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Formulario (Create)</strong></td>
+<td style="text-align: left;"><code>GET</code></td>
+<td style="text-align: left;"><code>/atenciones/registrar</code></td>
+<td style="text-align: left;"><code>AtencionController@create</code></td>
+<td style="text-align: left;"><code>atenciones/create.blade.php</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Guardar (Create)</strong></td>
+<td style="text-align: left;"><code>POST</code></td>
+<td style="text-align: left;"><code>/atenciones</code></td>
+<td style="text-align: left;"><code>AtencionController@store</code></td>
+<td style="text-align: left;">Redirección a <code>/alumnos/{id}</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Funcionamiento de Registro:</h4>
+<ol>
+<li><code>create()</code> consulta todos los expedientes activos para poblar el selector de alumnos. Si recibe un parámetro <code>?expediente_id=X</code>, selecciona automáticamente al alumno correspondiente.</li>
+<li><code>store()</code> valida que el <code>expediente_ciclo_id</code> exista, que el tipo pertenezca a los valores permitidos (<code>AULA</code>, <code>PADRES</code>, <code>ALUMNO</code>, <code>DOCENTE</code>), y que se capturen motivo y observaciones.</li>
+<li>Almacena el evento y redirige de inmediato a la vista <code>alumnos.show</code>, donde la intervención se refleja en la línea de tiempo.</li>
+</ol>
+<hr />
+<h3>C. Módulo de Métricas y Rendición de Cuentas (<code>DashboardController</code>)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Operación</th>
+<th style="text-align: left;">Método HTTP</th>
+<th style="text-align: left;">Ruta</th>
+<th style="text-align: left;">Acción en Controlador</th>
+<th style="text-align: left;">Vista / Destino</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Consulta (Read)</strong></td>
+<td style="text-align: left;"><code>GET</code></td>
+<td style="text-align: left;"><code>/</code></td>
+<td style="text-align: left;"><code>DashboardController@index</code></td>
+<td style="text-align: left;"><code>dashboard.blade.php</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Informe Imprimible (PDF)</strong></td>
+<td style="text-align: left;"><code>GET</code></td>
+<td style="text-align: left;"><code>/dashboard/imprimir</code></td>
+<td style="text-align: left;"><code>DashboardController@imprimirReporte</code></td>
+<td style="text-align: left;"><code>dashboard/imprimir.blade.php</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Funcionamiento del Algoritmo de Agrupación:</h4>
+<ol>
+<li>Recibe por parámetro GET el <code>mes</code> y el <code>anio</code> (por defecto toma el mes y año actuales con <code>Carbon::now()</code>).</li>
+<li>Realiza una agregación SQL directa y eficiente:
+   <code>php
+   $conteos = AtencionEvento::whereYear('fecha_hora', $anio)
+       -&gt;whereMonth('fecha_hora', $mes)
+       -&gt;selectRaw('tipo_atencion, COUNT(*) as total')
+       -&gt;groupBy('tipo_atencion')
+       -&gt;pluck('total', 'tipo_atencion')
+       -&gt;toArray();</code></li>
+<li>Mapea y asegura los totales de las cuatro categorías: <code>AULA</code>, <code>PADRES</code>, <code>ALUMNO</code>, <code>DOCENTE</code>, más el consolidado global <code>totalMes</code>.</li>
+<li>Consulta los casos con <code>prioridad = 'ALTA'</code> y <code>estado_ciclo = 'ACTIVO'</code> utilizando <em>eager loading</em> para listarlos en el panel de supervisión prioritaria.</li>
+</ol>
+<hr />
+<h3>D. Módulo de Ciclos Escolares y Transición ("Brincado") (<code>CicloController</code>)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Operación</th>
+<th style="text-align: left;">Método HTTP</th>
+<th style="text-align: left;">Ruta</th>
+<th style="text-align: left;">Acción en Controlador</th>
+<th style="text-align: left;">Vista / Destino</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Listar Periodos</strong></td>
+<td style="text-align: left;"><code>GET</code></td>
+<td style="text-align: left;"><code>/ciclos</code></td>
+<td style="text-align: left;"><code>CicloController@index</code></td>
+<td style="text-align: left;"><code>ciclos/index.blade.php</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Asistente Brincado</strong></td>
+<td style="text-align: left;"><code>GET</code></td>
+<td style="text-align: left;"><code>/ciclos/transicion</code></td>
+<td style="text-align: left;"><code>CicloController@transicionForm</code></td>
+<td style="text-align: left;"><code>ciclos/transicion.blade.php</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ejecutar Transición</strong></td>
+<td style="text-align: left;"><code>POST</code></td>
+<td style="text-align: left;"><code>/ciclos/transicion</code></td>
+<td style="text-align: left;"><code>CicloController@ejecutarTransicion</code></td>
+<td style="text-align: left;">Redirección a <code>/ciclos</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Transacción Atómica de Pase de Año (<code>ejecutarTransicion</code>):</h4>
+<ol>
+<li>Ejecuta todo el proceso envuelto en <code>DB::transaction()</code>.</li>
+<li>Congela e inmoviliza el ciclo saliente (<code>estado = 'CONGELADO'</code>).</li>
+<li>Da de alta el nuevo ciclo lectivo con estado <code>ACTIVO</code>.</li>
+<li>Itera cada alumno del ciclo anterior evaluando su acción:</li>
+<li><strong><code>PROMOVER</code>:</strong> Sella la ficha previa como <code>PROMOVIDO</code> y clona sus datos clínicos (diagnóstico, medicación, adecuaciones y apoyos) en un nuevo <code>ExpedienteCiclo</code> vinculado al nuevo ciclo con el grado promovido.</li>
+<li><strong><code>REPETIR</code>:</strong> Sella la ficha previa como <code>REPETIDOR</code> y abre ficha en el nuevo ciclo con el mismo grado escolar y antecedentes heredados.</li>
+<li><strong><code>SECUNDARIA</code>:</strong> Sella la ficha previa como <code>SECUNDARIA</code> y actualiza al alumno a <code>EGRESADO_SECUNDARIA</code>.</li>
+<li><strong><code>ARCHIVO_MUERTO</code>:</strong> Sella la ficha previa como <code>ARCHIVO_MUERTO</code> y marca al estudiante en <code>ARCHIVO_MUERTO</code>.</li>
+</ol>
+<hr />
+<h2>5. El Proceso Operativo Paso a Paso (Workflow)</h2>
+<pre><code class="language-text">[ 1. Admisión / Diagnóstico Inicial ]
+   │
+   ▼
+[ 2. Alta de Ficha en PsicoData ]
+   ├── Datos del Alumno (Nombre, Diagnóstico, Grado, Docente Titular)
+   ├── Apoyos (Adecuaciones curriculares, Medicación, Especialista externo)
+   └── Clasificación de Prioridad:
+         ├── ALTA ────&gt; Atención y supervisión mensual activa
+         └── SEGUIMIENTO ─&gt; Monitoreo trimestral
+   │
+   ▼
+[ 3. Seguimiento e Intervenciones Diarias ]
+   ├── Modo Aula Touch Móvil (Atajos rápidos de conducta + Dictado por voz)
+   ├── Entrevista / Cita con Tutores (Tipo: PADRES)
+   ├── Sesión Individual con el Alumno (Tipo: ALUMNO)
+   └── Coordinación con el Docente (Tipo: DOCENTE)
+   │
+   ▼
+[ 4. Registro y Acuerdos ]
+   └── Se registran notas y compromisos fechados (Línea de tiempo continua)
+   │
+   ▼
+[ 5. Cierre Mensual para Dirección ]
+   ├── El Dashboard consolida los totales de intervenciones
+   ├── Se revisa el cumplimiento de casos de Alta Prioridad
+   └── Se emite el reporte ejecutivo oficial imprimible a PDF
+   │
+   ▼
+[ 6. Fin de Año Lectivo y Transición (&quot;Brincado&quot;) ]
+   ├── Congelamiento inmutable del ciclo anterior
+   ├── Apertura del nuevo ciclo escolar
+   └── Clonación de antecedentes clínicos (Promovidos, Repetidores, Secundaria, Archivo Muerto)
+</code></pre>
+<hr />
+<h2>6. Buenas Prácticas y Calidad de Código Implementada</h2>
+<ol>
+<li><strong>Prevención de Consultas N+1 (Eager Loading):</strong> Uso riguroso de <code>with(['alumno', 'ciclo'])</code> y <code>with(['alumno', 'atenciones', 'ciclo'])</code> en Eloquent, reduciendo radicalmente los accesos a MariaDB de $\mathcal{O}(N)$ a consultas constantes.</li>
+<li><strong>Validación Estricta con Form Requests:</strong> Desacoplamiento total de validaciones en clases dedicadas (<code>StoreAlumnoRequest</code>, <code>UpdateAlumnoRequest</code>, <code>StoreAtencionRequest</code>, <code>StoreMovilAulaRequest</code>, <code>TransicionCicloRequest</code>), garantizando integridad de datos, mensajes claros en español y protección contra entradas anómalas.</li>
+<li><strong>Integridad Relacional con MariaDB:</strong> Llaves foráneas con <code>onDelete('cascade')</code> y transacciones ACID (<code>DB::transaction</code>) para operaciones críticas como el cambio de ciclo.</li>
+<li><strong>Diseño Modular y Adaptable:</strong> Estructura limpia basada en componentes Tailwind CSS, soporte para impresión membretada (@media print) y diseño táctil optimizado para smartphones y tablets en aula.</li>
+</ol>
+<hr />
+<h2>7. Seguridad, Privacidad e Infraestructura</h2>
+<ol>
+<li><strong>Control de Acceso Basado en Roles (RBAC):</strong></li>
+<li><strong>Psicopedagogía:</strong> Acceso total a fichas médicas, diagnósticos, adecuaciones y bitácoras.</li>
+<li><strong>Dirección Escolar:</strong> Auditoría, estadísticas, reportes ejecutivos e inspección de casos prioritarios.</li>
+<li><strong>Plantilla Docente (Bloqueo 403):</strong> Se restringe estrictamente cualquier consulta a historiales psicopedagógicos o clínicos de los alumnos, protegiendo el secreto profesional conforme a la legislación de protección de datos de menores.</li>
+<li><strong>Estrategia de Respaldos Locales (MariaDB / mysqldump):</strong></li>
+<li>Comando Artisan <code>php artisan db:backup</code> con volcado no bloqueante (<code>--single-transaction</code>).</li>
+<li>Tarea nocturna programada a las 23:00 hrs (<code>scripts/backup_database.ps1</code> en Windows Server).</li>
+<li>Retención automática de las últimas 30 copias en disco y módulo web para descarga de respaldos a unidades USB institucionales.</li>
+<li><strong>Estabilidad y Desvinculación de OneDrive:</strong></li>
+<li>La sincronización en caliente de servicios como Microsoft OneDrive bloquea archivos de base de datos en ejecución (<code>database is locked</code>) y colapsa la CPU por el escaneo masivo de <code>vendor/</code>.</li>
+<li>Diagnóstico automatizado con <code>php artisan app:check-environment</code> y script <code>scripts/migrar_fuera_de_onedrive.ps1</code> para alojar la aplicación en rutas locales limpias (<code>C:\Proyectos</code> o <code>C:\servidor</code>).</li>
+</ol>
+</body>
+</html>

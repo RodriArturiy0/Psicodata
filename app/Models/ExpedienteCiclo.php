@@ -9,8 +9,9 @@ class ExpedienteCiclo extends Model
     protected $table = 'expedientes_ciclo';
     protected $fillable = [
         'alumno_id', 'ciclo_id', 'grado_grupo', 'docente_titular',
-        'diagnostico', 'tiene_valoracion_fisica', 'tratamiento_farmacologico',
-        'detalle_farmaco', 'requiere_adecuaciones', 'detalle_adecuaciones',
+        'canalizado_por', 'fecha_ingreso_programa',
+        'diagnostico', 'area_atencion', 'tiene_valoracion_fisica', 'tratamiento_farmacologico',
+        'detalle_farmaco', 'requiere_adecuaciones', 'detalle_adecuaciones', 'compromisos_familia',
         'especialista_externo', 'prioridad', 'estado_ciclo'
     ];
 

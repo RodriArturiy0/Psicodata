@@ -8,8 +8,8 @@ class AtencionEvento extends Model
 {
     protected $table = 'atenciones_eventos';
     protected $fillable = [
-        'expediente_ciclo_id', 'user_id', 'tipo_atencion',
-        'fecha_hora', 'participantes', 'motivo', 'observaciones', 'acuerdos'
+        'expediente_ciclo_id', 'user_id', 'tipo_atencion', 'duracion_minutos',
+        'fecha_hora', 'participantes', 'motivo', 'observaciones', 'acuerdos', 'estatus_compromiso'
     ];
 
     protected $casts = [
