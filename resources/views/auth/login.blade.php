@@ -41,108 +41,78 @@
             </div>
         </div>
 
-        <!-- Panel Derecho: Formulario y Perfiles de Demostración -->
-        <div class="lg:col-span-7 p-8 sm:p-10 flex flex-col justify-between">
+        <!-- Panel Derecho: Formulario de Autenticación -->
+        <div class="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-between">
             <div>
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold text-slate-900">Acceso Institucional Seguro</h2>
-                    <p class="text-xs text-slate-500 mt-1">Ingrese con sus credenciales autorizadas</p>
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Acceso Institucional Seguro</h2>
+                    <p class="text-xs text-slate-500 mt-1">Ingrese sus credenciales oficiales para acceder al sistema</p>
                 </div>
 
                 @if (session('error'))
-                    <div class="mb-4 p-3 bg-rose-50 border-l-4 border-rose-500 text-rose-800 text-xs rounded-r-lg font-medium">
-                        {{ session('error') }}
+                    <div class="mb-5 p-3.5 bg-rose-50 border-l-4 border-rose-500 text-rose-800 text-xs rounded-r-xl font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4 text-rose-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>{{ session('error') }}</span>
                     </div>
                 @endif
 
                 @if (session('info'))
-                    <div class="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 text-blue-800 text-xs rounded-r-lg font-medium">
-                        {{ session('info') }}
+                    <div class="mb-5 p-3.5 bg-blue-50 border-l-4 border-blue-500 text-blue-800 text-xs rounded-r-xl font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>{{ session('info') }}</span>
                     </div>
                 @endif
 
                 <!-- Formulario Estándar -->
-                <form action="{{ route('login.post') }}" method="POST" class="space-y-4">
+                <form action="{{ route('login.post') }}" method="POST" class="space-y-5">
                     @csrf
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Correo Institucional</label>
-                        <input type="email" id="input-email" name="email" value="{{ old('email', 'mercysegovia@colegiopaidoscampeche.edu.mx') }}" required
-                            class="w-full px-4 py-2.5 rounded-xl border @error('email') border-rose-500 bg-rose-50 @else border-slate-200 @enderror text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+                        <label for="input-email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Correo Institucional</label>
+                        <div class="relative">
+                            <input type="email" id="input-email" name="email" value="{{ old('email') }}" placeholder="usuario@colegiopaidoscampeche.edu.mx" required autofocus
+                                class="w-full px-4 py-3 rounded-xl border @error('email') border-rose-500 bg-rose-50/50 @else border-slate-200 @enderror text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition placeholder:text-slate-400">
+                        </div>
                         @error('email')
-                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-rose-600 mt-1.5 font-medium">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Contraseña</label>
-                        <input type="password" name="password" value="paidos2026" required
-                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+                        <label for="input-password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Contraseña</label>
+                        <div class="relative">
+                            <input type="password" id="input-password" name="password" placeholder="••••••••" required
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition placeholder:text-slate-400">
+                        </div>
                     </div>
 
-                    <div class="flex items-center justify-between text-xs text-slate-600">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="remember" class="rounded text-indigo-600 focus:ring-indigo-500">
+                    <div class="flex items-center justify-between text-xs text-slate-600 pt-1">
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input type="checkbox" name="remember" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                             <span>Recordar sesión</span>
                         </label>
-                        <span class="text-indigo-600 font-semibold">Servidor Local Paidos</span>
+                        <span class="text-indigo-600 font-semibold flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd"/>
+                            </svg>
+                            Intranet LAN Segura
+                        </span>
                     </div>
 
-                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
-                        <span>Ingresar a PsicoData</span>
+                    <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 mt-2">
+                        <span>Iniciar Sesión</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                         </svg>
                     </button>
                 </form>
-
-                <!-- Matriz de Acceso de Usuarios - PsicoData -->
-                <div class="mt-6 pt-5 border-t border-slate-100">
-                    <div class="flex items-center justify-between mb-2.5">
-                        <p class="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                            Matriz de Acceso Institucional:
-                        </p>
-                        <span class="text-[10px] bg-indigo-100 text-indigo-800 font-semibold px-2 py-0.5 rounded-full">3 Cuentas Oficiales</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <!-- 1. Psicóloga Mercy -->
-                        <a href="{{ route('switch.role', 'MERCY') }}" class="p-2.5 bg-indigo-50/80 hover:bg-indigo-100/80 border border-indigo-200/80 rounded-xl transition text-left group">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-indigo-950 group-hover:text-indigo-600 truncate">Mercedes Segovia</span>
-                                <span class="text-[9px] bg-indigo-200 text-indigo-800 px-1 py-0.2 rounded font-bold shrink-0">Admin</span>
-                            </div>
-                            <p class="text-[11px] text-slate-600 mt-0.5 font-medium">Psicóloga Mercy</p>
-                            <p class="text-[10px] text-indigo-700 font-mono truncate mt-1">mercysegovia@...</p>
-                            <span class="inline-block mt-1 text-[9px] text-indigo-600 font-semibold">● Acceso Completo</span>
-                        </a>
-
-                        <!-- 2. Psicóloga Greyci -->
-                        <a href="{{ route('switch.role', 'GREYCI') }}" class="p-2.5 bg-indigo-50/80 hover:bg-indigo-100/80 border border-indigo-200/80 rounded-xl transition text-left group">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-indigo-950 group-hover:text-indigo-600 truncate">Greyci Salas C.</span>
-                                <span class="text-[9px] bg-indigo-200 text-indigo-800 px-1 py-0.2 rounded font-bold shrink-0">Psico</span>
-                            </div>
-                            <p class="text-[11px] text-slate-600 mt-0.5 font-medium">Psicóloga Greyci</p>
-                            <p class="text-[10px] text-indigo-700 font-mono truncate mt-1">greycia@...</p>
-                            <span class="inline-block mt-1 text-[9px] text-indigo-600 font-semibold">● Acceso Completo</span>
-                        </a>
-
-                        <!-- 3. Directora de Primaria -->
-                        <a href="{{ route('switch.role', 'DAMARIS') }}" class="p-2.5 bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200/80 rounded-xl transition text-left group">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-emerald-950 group-hover:text-emerald-700 truncate">Damaris Morales</span>
-                                <span class="text-[9px] bg-emerald-200 text-emerald-800 px-1 py-0.2 rounded font-bold shrink-0">Lectura</span>
-                            </div>
-                            <p class="text-[11px] text-slate-600 mt-0.5 font-medium">Directora Primaria</p>
-                            <p class="text-[10px] text-emerald-700 font-mono truncate mt-1">damarismorales@...</p>
-                            <span class="inline-block mt-1 text-[9px] text-emerald-700 font-semibold">● Solo Lectura</span>
-                        </a>
-                    </div>
-                </div>
             </div>
 
-            <div class="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400 text-center">
-                Seguridad institucional conforme a la NOM y leyes de protección de datos personales en el ámbito escolar.
+            <div class="mt-10 pt-4 border-t border-slate-100 text-[11px] text-slate-400 text-center">
+                Seguridad institucional conforme a la NOM y directrices de protección de datos personales en el ámbito escolar.
             </div>
         </div>
     </div>

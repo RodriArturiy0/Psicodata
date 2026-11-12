@@ -441,17 +441,25 @@ class ExampleTest extends TestCase
     {
         $this->crearDatosBase();
 
-        // 1. Acceso de Psicóloga Mercy - Mercedes Segovia Mayo (Acceso Completo)
-        $switchMercy = $this->get(route('switch.role', 'MERCY'));
-        $switchMercy->assertRedirect(route('dashboard'));
-        $this->assertAuthenticated();
-        /** @var User $usuarioMercy */
-        $usuarioMercy = Auth::user();
-        $this->assertEquals('mercysegovia@colegiopaidoscampeche.edu.mx', $usuarioMercy->email);
-        $this->assertEquals('Mercedes Segovia Mayo', $usuarioMercy->name);
-        $this->assertEquals('PSICOPEDAGOGIA', $usuarioMercy->rol);
-        $this->assertTrue($usuarioMercy->puedeVerExpedientes());
-        $this->assertTrue($usuarioMercy->puedeEditarExpedientes());
+        // 1. Acceso de Psicóloga Mercy - Mercedes Segovia Mayo (Acceso Completo con contraseña)
+        $userMercy = User::updateOrCreate(
+            ['email' => 'mercysegovia@colegiopaidoscampeche.edu.mx'],
+            [
+                'name' => 'Mercedes Segovia Mayo',
+                'password' => bcrypt('paidos2026'),
+                'rol' => 'PSICOPEDAGOGIA',
+                'cargo' => 'Psicóloga de Primaria / Admin',
+                'activo' => true,
+            ]
+        );
+        $postMercy = $this->post(route('login.post'), [
+            'email' => 'mercysegovia@colegiopaidoscampeche.edu.mx',
+            'password' => 'paidos2026',
+        ]);
+        $postMercy->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($userMercy);
+        $this->assertTrue($userMercy->puedeVerExpedientes());
+        $this->assertTrue($userMercy->puedeEditarExpedientes());
 
         // Verificar que Mercy puede ver los expedientes y modo aula
         $responseMercyExp = $this->get(route('alumnos.index'));
@@ -460,28 +468,46 @@ class ExampleTest extends TestCase
         $responseMercyAula = $this->get(route('atenciones.movil.aula'));
         $responseMercyAula->assertStatus(200);
 
-        // 2. Acceso de Psicóloga Greyci - Greyci Salas Cahuich (Acceso Completo)
-        $switchGreyci = $this->get(route('switch.role', 'GREYCI'));
-        $switchGreyci->assertRedirect(route('dashboard'));
-        /** @var User $usuarioGreyci */
-        $usuarioGreyci = Auth::user();
-        $this->assertEquals('greycia@colegiopaidoscampeche.edu.mx', $usuarioGreyci->email);
-        $this->assertEquals('Greyci Salas Cahuich', $usuarioGreyci->name);
-        $this->assertEquals('PSICOPEDAGOGIA', $usuarioGreyci->rol);
-        $this->assertTrue($usuarioGreyci->puedeVerExpedientes());
-        $this->assertTrue($usuarioGreyci->puedeEditarExpedientes());
+        // 2. Acceso de Psicóloga Greyci - Greyci Salas Cahuich (Acceso Completo con contraseña)
+        $userGreyci = User::updateOrCreate(
+            ['email' => 'greycia@colegiopaidoscampeche.edu.mx'],
+            [
+                'name' => 'Greyci Salas Cahuich',
+                'password' => bcrypt('paidos2026'),
+                'rol' => 'PSICOPEDAGOGIA',
+                'cargo' => 'Psicóloga de Primaria',
+                'activo' => true,
+            ]
+        );
+        $postGreyci = $this->post(route('login.post'), [
+            'email' => 'greycia@colegiopaidoscampeche.edu.mx',
+            'password' => 'paidos2026',
+        ]);
+        $postGreyci->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($userGreyci);
+        $this->assertTrue($userGreyci->puedeVerExpedientes());
+        $this->assertTrue($userGreyci->puedeEditarExpedientes());
 
-        // 3. Acceso de Directora de Primaria - Damaris Morales Bastarrachea (Solo Lectura)
-        $switchDamaris = $this->get(route('switch.role', 'DAMARIS'));
-        $switchDamaris->assertRedirect(route('dashboard'));
-        /** @var User $usuarioDamaris */
-        $usuarioDamaris = Auth::user();
-        $this->assertEquals('damarismorales@colegiopaidoscampeche.edu.mx', $usuarioDamaris->email);
-        $this->assertEquals('Damaris Morales Bastarrachea', $usuarioDamaris->name);
-        $this->assertEquals('DIRECCION', $usuarioDamaris->rol);
-        $this->assertTrue($usuarioDamaris->puedeVerExpedientes());
-        $this->assertFalse($usuarioDamaris->puedeEditarExpedientes()); // Solo Lectura
-        $this->assertTrue($usuarioDamaris->esDireccion());
+        // 3. Acceso de Directora de Primaria - Damaris Morales Bastarrachea (Solo Lectura con contraseña)
+        $userDamaris = User::updateOrCreate(
+            ['email' => 'damarismorales@colegiopaidoscampeche.edu.mx'],
+            [
+                'name' => 'Damaris Morales Bastarrachea',
+                'password' => bcrypt('paidos2026'),
+                'rol' => 'DIRECCION',
+                'cargo' => 'Directora de Primaria',
+                'activo' => true,
+            ]
+        );
+        $postDamaris = $this->post(route('login.post'), [
+            'email' => 'damarismorales@colegiopaidoscampeche.edu.mx',
+            'password' => 'paidos2026',
+        ]);
+        $postDamaris->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($userDamaris);
+        $this->assertTrue($userDamaris->puedeVerExpedientes());
+        $this->assertFalse($userDamaris->puedeEditarExpedientes()); // Solo Lectura
+        $this->assertTrue($userDamaris->esDireccion());
 
         // Damaris puede consultar expedientes pero en modo solo lectura (sin botón de nueva ficha)
         $responseDamarisExp = $this->get(route('alumnos.index'));
@@ -493,11 +519,14 @@ class ExampleTest extends TestCase
         $responseDamarisInforme->assertStatus(200);
         $responseDamarisInforme->assertSee('Damaris Morales Bastarrachea');
 
-        // 4. La pantalla de login muestra la matriz con los 3 nombres oficiales
+        // 4. La pantalla de login es limpia y no tiene credenciales ni botones de auto-login expuestos
+        $this->post(route('logout'));
         $responseLogin = $this->get(route('login'));
         $responseLogin->assertStatus(200);
-        $responseLogin->assertSee('Mercedes Segovia');
-        $responseLogin->assertSee('Greyci Salas');
-        $responseLogin->assertSee('Damaris Morales');
+        $responseLogin->assertSee('Acceso Institucional Seguro');
+        $responseLogin->assertSee('Correo Institucional');
+        $responseLogin->assertSee('Contraseña');
+        $responseLogin->assertDontSee('paidos2026'); // La contraseña NO debe venir prellenada
+        $responseLogin->assertDontSee('switch.role'); // NO debe haber botones de auto-login
     }
 }

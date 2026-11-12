@@ -112,48 +112,31 @@
 
             <!-- Acciones de Cabecera -->
             <div class="flex items-center space-x-2 sm:space-x-3">
-                <!-- Usuario Actual / Perfil Minimalista -->
-                <div class="relative group">
-                    <button class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold border flex items-center gap-2 transition
-                        @if($esDocente) bg-rose-50 text-rose-800 border-rose-200
-                        @elseif($usuarioActual && $usuarioActual->esDireccion()) bg-emerald-50 text-emerald-800 border-emerald-200
-                        @else bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 @endif">
-                        <span class="w-6 h-6 rounded-full @if($usuarioActual && $usuarioActual->esDireccion()) bg-emerald-200 text-emerald-800 @else bg-indigo-200 text-indigo-800 @endif flex items-center justify-center text-[10px] font-bold">
-                            {{ substr($usuarioActual->name ?? 'U', 0, 1) }}
-                        </span>
-                        <div class="text-left hidden sm:block">
-                            <p class="text-xs font-bold text-slate-800 leading-none">{{ $usuarioActual->name ?? 'Usuario' }}</p>
-                            <p class="text-[10px] text-slate-400 mt-0.5 leading-none">
-                                @if($usuarioActual && $usuarioActual->esDireccion()) Directora (Lectura)
-                                @elseif($usuarioActual && $usuarioActual->esAdmin()) Psicóloga Mercy (Admin)
-                                @else Psicóloga @endif
-                            </p>
-                        </div>
-                        <i class="fa-solid fa-chevron-down text-[9px] text-slate-400 ml-0.5"></i>
-                    </button>
-                    <!-- Menú Desplegable Limpio -->
-                    <div class="absolute right-0 mt-1.5 w-60 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden group-hover:block z-50 text-xs">
-                        <div class="px-3 py-1 text-[10px] uppercase font-bold text-slate-400 tracking-wider">Cambiar de cuenta:</div>
-                        <a href="{{ route('switch.role', 'MERCY') }}" class="block px-3 py-2 hover:bg-indigo-50 text-slate-800 transition">
-                            <span class="font-bold block text-slate-900">Mercedes Segovia</span>
-                            <span class="text-[10px] text-indigo-600">Psicóloga Mercy (Admin)</span>
-                        </a>
-                        <a href="{{ route('switch.role', 'GREYCI') }}" class="block px-3 py-2 hover:bg-indigo-50 text-slate-800 transition">
-                            <span class="font-bold block text-slate-900">Greyci Salas</span>
-                            <span class="text-[10px] text-indigo-600">Psicóloga Greyci (Completo)</span>
-                        </a>
-                        <a href="{{ route('switch.role', 'DAMARIS') }}" class="block px-3 py-2 hover:bg-emerald-50 text-slate-800 transition">
-                            <span class="font-bold block text-slate-900">Damaris Morales</span>
-                            <span class="text-[10px] text-emerald-700">Directora Primaria (Solo Lectura)</span>
-                        </a>
+                <!-- Usuario Actual / Perfil Autenticado Seguro -->
+                <div class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold border flex items-center gap-2 select-none
+                    @if($esDocente) bg-rose-50 text-rose-800 border-rose-200
+                    @elseif($usuarioActual && $usuarioActual->esDireccion()) bg-emerald-50 text-emerald-800 border-emerald-200
+                    @else bg-slate-50 text-slate-700 border-slate-200 @endif">
+                    <span class="w-6 h-6 rounded-full @if($usuarioActual && $usuarioActual->esDireccion()) bg-emerald-200 text-emerald-800 @else bg-indigo-200 text-indigo-800 @endif flex items-center justify-center text-[10px] font-bold">
+                        {{ substr($usuarioActual->name ?? 'U', 0, 1) }}
+                    </span>
+                    <div class="text-left hidden sm:block">
+                        <p class="text-xs font-bold text-slate-800 leading-none">{{ $usuarioActual->name ?? 'Usuario' }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5 leading-none">
+                            @if($usuarioActual && $usuarioActual->esDireccion()) Directora (Lectura)
+                            @elseif($usuarioActual && $usuarioActual->esAdmin()) Psicóloga Mercy (Admin)
+                            @elseif($esDocente) Docente Titular
+                            @else Psicóloga de Primaria @endif
+                        </p>
                     </div>
                 </div>
 
                 @if(auth()->check())
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
-                        <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 text-xs transition rounded-lg hover:bg-slate-100" title="Cerrar sesión">
+                        <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 text-xs transition rounded-lg hover:bg-slate-100 flex items-center gap-1.5" title="Cerrar sesión segura">
                             <i class="fa-solid fa-right-from-bracket"></i>
+                            <span class="hidden md:inline text-[11px] font-medium text-slate-500 hover:text-rose-600">Salir</span>
                         </button>
                     </form>
                 @else

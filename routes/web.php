@@ -12,7 +12,6 @@ use App\Http\Controllers\AuthController;
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('cambiar-rol/{rol}', [AuthController::class, 'switchRole'])->name('switch.role');
 
 // Rutas Protegidas: Al ingresar al servidor, los usuarios no autenticados van directo al Login
 Route::middleware(['auth'])->group(function () {

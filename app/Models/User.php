@@ -8,6 +8,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Modelo de Usuario Institucional PsicoData.
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string $rol
+ * @property string|null $cargo
+ * @property bool $activo
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * 
+ * @method bool esPsicopedagogia()
+ * @method bool esDireccion()
+ * @method bool esDocente()
+ * @method bool esAdmin()
+ * @method bool puedeVerExpedientes()
+ * @method bool puedeEditarExpedientes()
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
